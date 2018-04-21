@@ -1,0 +1,115 @@
+<form [formGroup]="vendorForm" class="form" (ngSubmit)="save()">
+    <h1 class="subheading">New Vendor</h1>
+    <legend>General Information</legend>
+    <fieldset>
+        <div class="row">
+            <label for="name" class="form-label">Vendor's Name</label>
+            <input type="text" class="form-input" id="name" [(ngModel)]="name" formControlName="vendorName"
+            [class.input-success]="vendorForm.controls['vendorName'].valid && vendorForm.controls['vendorName'].dirty"
+            [class.input-error]="!vendorForm.controls['vendorName'].valid && vendorForm.controls['vendorName'].dirty">
+        </div>
+        <div class="row">
+            <label for="description" class="form-label">Vendor Description</label>
+            <input type="text" class="form-input" id="description" [(ngModel)]="description" formControlName="vendorDescription"
+            [class.input-success]="vendorForm.controls['vendorDescription'].valid && vendorForm.controls['vendorDescription'].dirty"
+            [class.input-error]="!vendorForm.controls['vendorDescription'].valid && vendorForm.controls['vendorDescription'].dirty">
+        </div>
+        <div class="row">
+            <label for="type" class="form-label">Vendor Type</label>
+            <select class="form-input select" id="type" [(ngModel)]="type" formControlName="vendorType"
+            [class.input-success]="vendorForm.controls['vendorType'].valid && vendorForm.controls['vendorType'].dirty"
+            [class.input-error]="!vendorForm.controls['vendorType'].valid && vendorForm.controls['vendorType'].dirty">
+                <option>Beauty and Fragrances</option>
+                <option>Books and Magazines</option>
+                <option>Clothing, Accessories and Shoes</option>
+                <option>Computers and Services</option>
+                <option>Electronics and Telecom</option>
+                <option>Entertainment and Media</option>
+                <option>Food Retail and Services</option>
+                <option>Health and Personal Care</option>
+                <option>Retail</option>
+                <option>Sports and Outdoors</option>
+                <option>Travel</option>
+                <option selected>Other</option>
+            </select>
+        </div>
+    </fieldset>
+    <legend>Location</legend>
+    <fieldset>
+        <div class="column">
+            <div class="row col-2">
+                <label for="inputAddress" class="form-label">Address Line 1</label>
+                <input type="text" class="form-input" id="inputAddress" [(ngModel)]="addressLine1" formControlName="addressLine1"
+                [class.input-success]="vendorForm.controls['addressLine1'].valid && vendorForm.controls['addressLine1'].dirty"
+            [class.input-error]="!vendorForm.controls['addressLine1'].valid && vendorForm.controls['addressLine1'].dirty">
+            </div>
+            <div class="row col-2">
+                <label for="inputAddress2" class="form-label">Address Line 2</label>
+                <input type="text" class="form-input" id="inputAddress2" [(ngModel)]="addressLine2" formControlName="addressLine2"
+                [class.input-success]="vendorForm.controls['addressLine2'].valid && vendorForm.controls['addressLine2'].dirty"
+            [class.input-error]="!vendorForm.controls['addressLine2'].valid && vendorForm.controls['addressLine2'].dirty">
+            </div>
+        </div>
+        <div class="row col-2">
+            <label for="inputCity" class="form-label">City</label>
+            <input type="text" class="form-input" id="inputCity" [(ngModel)]="city" formControlName="city"
+            [class.input-success]="vendorForm.controls['city'].valid && vendorForm.controls['city'].dirty"
+            [class.input-error]="!vendorForm.controls['city'].valid && vendorForm.controls['city'].dirty">
+        </div>
+    </fieldset>
+    <legend>Contact</legend>
+    <fieldset>
+        <div class="row">
+            <label for="inputEmail" class="form-label">Administrator Email</label>
+            <input type="email" class="form-input" id="inputEmail" [(ngModel)]="adminEmail" formControlName="adminEmail"
+            [class.input-success]="vendorForm.controls['adminEmail'].valid && vendorForm.controls['adminEmail'].dirty"
+            [class.input-error]="!vendorForm.controls['adminEmail'].valid && vendorForm.controls['adminEmail'].dirty">
+        </div>
+        <div class="row">
+            <label for="inputAdminName" class="form-label">Administrator Name</label>
+            <input type="test" class="form-input" id="inputAdminName" [(ngModel)]="adminName" formControlName="adminName"
+            [class.input-success]="vendorForm.controls['adminName'].valid && vendorForm.controls['adminName'].dirty"
+            [class.input-error]="!vendorForm.controls['adminName'].valid && vendorForm.controls['adminName'].dirty">
+        </div>
+        <div class="column">
+            <div class="row col-2">
+                <div class="row">
+                    <label for="inputTel1" class="form-label">Telephone 1</label>
+                    <input type="tel" class="form-input" id="inputTel1" [(ngModel)]="telephone1" formControlName="telephone1"
+                    [class.input-success]="vendorForm.controls['telephone1'].valid && vendorForm.controls['telephone1'].dirty"
+                    [class.input-error]="!vendorForm.controls['telephone1'].valid && vendorForm.controls['telephone1'].dirty">
+                </div>
+                <div class="row">
+                    <label for="inputTel2" class="form-label">Telephone 2</label>
+                    <input type="tel" class="form-input" id="inputTel2" [(ngModel)]="telephone2" formControlName="telephone2"
+                    [class.input-success]="vendorForm.controls['telephone2'].valid && vendorForm.controls['telephone2'].dirty"
+                    [class.input-error]="!vendorForm.controls['telephone2'].valid && vendorForm.controls['telephone2'].dirty">
+                </div>
+            </div>
+        </div>
+    </fieldset>
+    <legend>Social Media</legend>
+    <fieldset>
+        <div class="row">
+            <label for="inputFacebook" class="form-label">Facebook Link</label>
+            <input type="url" class="form-input" id="inputFacebook" [(ngModel)]="facebookLink" formControlName="facebookLink"
+            [class.input-success]="vendorForm.controls['facebookLink'].valid && vendorForm.controls['facebookLink'].dirty"
+            [class.input-error]="!vendorForm.controls['facebookLink'].valid && vendorForm.controls['facebookLink'].dirty">
+        </div>
+        <div class="row">
+            <label for="inputTwitter" class="form-label">Twitter Link</label>
+            <input type="url" class="form-input" id="inputTwitter" [(ngModel)]="twitterLink" formControlName="twitterLink"
+            [class.input-success]="vendorForm.controls['twitterLink'].valid && vendorForm.controls['twitterLink'].dirty"
+            [class.input-error]="!vendorForm.controls['twitterLink'].valid && vendorForm.controls['twitterLink'].dirty">
+        </div>
+        <div class="row">
+            <label for="inputInstagram" class="form-label">Instagram Link</label>
+            <input type="url" class="form-input" id="inputInstagram" [(ngModel)]="instagramLink" formControlName="instagramLink"
+            [class.input-success]="vendorForm.controls['instagramLink'].valid && vendorForm.controls['instagramLink'].dirty"
+            [class.input-error]="!vendorForm.controls['instagramLink'].valid && vendorForm.controls['instagramLink'].dirty">
+        </div>
+    </fieldset>
+    <div class="row">
+        <button type="submit" class="form-button" [disabled]="!vendorForm.valid">Save</button>
+    </div>
+</form>

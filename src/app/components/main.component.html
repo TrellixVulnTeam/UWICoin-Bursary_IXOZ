@@ -1,0 +1,9 @@
+<app-main-navigation class="main-navigation" (toggle)="toggleNav($event)" [employeeName]="employeeName" [employeeRole]="employeeRole"></app-main-navigation>
+<div class="container">
+    <div class="side-navigation" [class.toggle]="!showNav">
+        <app-side-navigation [role]="role"></app-side-navigation>
+    </div>
+    <main class="main-content">
+        <router-outlet></router-outlet>
+    </main>
+</div>

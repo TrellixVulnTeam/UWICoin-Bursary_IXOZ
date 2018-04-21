@@ -1,0 +1,25 @@
+<form class="form login-form" [formGroup]="loginForm" (ngSubmit)="login()">
+    <div class="row login-header">
+        <img class="login-logo" src="assets/imgs/icon.png" alt="UWICoin Logo" width="80" height="80">
+        <h1 class="subheading">Please sign in</h1>
+    </div>
+    <div class="row">
+        <label for="inputEmail" class="form-label">Email address</label>
+        <input type="email" id="inputEmail" class="form-input" [(ngModel)]="email" formControlName="email" required autofocus
+            [class.input-success]="loginForm.controls['email'].valid && loginForm.controls['email'].dirty"
+            [class.input-error]="!loginForm.controls['email'].valid && loginForm.controls['email'].dirty">
+    </div>
+    <div class="row">
+        <label for="inputPassword" class="form-label">Password</label>
+        <input type="password" id="inputPassword" class="form-input" [(ngModel)]="password" formControlName="password" required
+            [class.input-success]="loginForm.controls['password'].valid && loginForm.controls['password'].dirty"
+            [class.input-error]="!loginForm.controls['password'].valid && loginForm.controls['password'].dirty">
+    </div>
+    <div class="row">
+        <button class="form-button col-1" type="submit" [disabled]="!loginForm.valid" appDebounceClick [debounceTime]="500" (debounceClick)="login()">Sign in</button>
+    </div>
+    <div *ngIf="error" class="row error-message">
+        <p>{{ error }}</p>
+    </div>
+    <p class="extra">&copy; UWICoin {{ year }}</p>
+</form>

@@ -1,13 +1,161 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import '~bootstrap/dist/css/bootstrap.min.css'
 @import '~font-awesome/css/font-awesome.min.css'
+@import '~variables.sass'
 
-$primary:    #387ef5
-$secondary:  #32db64
-$danger:     #f53d3d
-$light:      #f4f4f4
-$dark:       #222
+html, body 
+    height: 100%
 
-.bg-primary
-    background: $primary
+body
+    margin: 0
+    padding: 0
+    font-family: 'Roboto', sans-serif
+    overflow: hidden
+
+fieldset
+    padding: 2em
+    border: 2px solid $outline
+    border-radius: 0.5em
+    margin-bottom: 1.5em
+
+legend
+    font-weight: 600
+    margin-bottom: 0.8em
+
+=heading($font-size)
+    text-transform: uppercase
+    color: $primary
+    font-size: $font-size
+    font-family: 'Lato', sans-serif;
+    font-weight: 600
+
+.mainheading
+    +heading(1.8em)
+q
+.subheading
+    +heading(1em)
+    display: block
+    margin-bottom: 2.2em
+
+.row
+    display: flex
+    flex-direction: column
+    margin-bottom: 1.5em
+
+.column
+    display: flex
+    flex-direction: row
+
+.hidden
+    display: none
+
+=form-margin()
+    box-sizing: border-box
+    margin-left: 0.5em
+    margin-right: 0.5em
+
+.form-label
+    font-weight: 600
+    font-size: 0.8em
+    display: block
+    margin-bottom: 0.8em
+    +form-margin()
+
+.form-input
+    outline: none
+    padding: 1em
+    border-style: solid
+    border-color: $outline
+    height: 45px
+    border-radius: 3px
+    border-width: 0.5px
+    +form-margin()
+
+input[type="submit"]:disabled    
+    background: desaturate($primary, 20%)
+
+.form-button
+    display: block
+    padding: 1em
+    color: $light
+    background-color: $primary
+    width: 20%
+    min-width: 200px
+    border: none
+    border-radius: 3px
+    cursor: pointer
+    +form-margin()
+
+.modal-container
+    z-index: 10000
+    position: fixed
+    display: flex
+    align-items: center
+    top: 0
+    bottom: 0
+    right: 0
+    left: 0
+    background-color: rgba(0, 0, 0, 0.4)
+
+.modal-content
+    display: flex
+    box-sizing: border-box
+    flex-direction: column
+    width: 80%
+    max-height: 80%
+    padding: 2em 4em 1em 4em
+    margin: 0 auto
+    border-radius: 0.7em
+    background-color: white
+    overflow-y: scroll
+
+.select
+    height: 45px
+
+.form
+    max-width: 750px
+    padding: 1em 1.5em
+    background: white
+    border-radius: 0.7em
+
+.input-error
+    border-color: $error
+
+.input-success
+    border-color: $success 
+
+.col-1
+    width: 100%
+
+.col-2
+    width: 50%
+
+.col-3
+    width: calc(50% / 3)
+
+.col-4
+    width: 25%
+
+.error-message
+  text-align: center
+  color: $error
+  font-weight: 600
+
+
+table
+    width: 100%
+
+    tr
+        display: flex
+        flex-direction: row
+        flex-grow: 1
+        text-align: left
+        padding: 1.2em 0
+        border-bottom: 1px solid $outline
+
+        th, td
+            width: 25%
+            flex-grow: 1
+
+        th
+            color: $primary

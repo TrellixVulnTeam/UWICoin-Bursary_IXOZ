@@ -1,0 +1,6 @@
+.scanner-video {
+    max-height: 400px;
+    width: 400px;
+    object-fit: contain;
+    display: block;
+}

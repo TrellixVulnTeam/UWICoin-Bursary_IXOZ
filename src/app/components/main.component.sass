@@ -1,0 +1,27 @@
+@import '~variables.sass'
+    
+.main-navigation
+    display: block
+    position: relative
+
+.container
+    display: flex
+    flex-direction: row
+    height: 100%
+
+    .side-navigation
+        min-width: 250px
+        width: 280px
+        height: 100%
+
+        transition: all 0.2s ease-in
+
+    .main-content
+        background-color: $light;
+        padding: 2em 4em 1em 4em
+        width: 100%
+        overflow: scroll;
+        padding-bottom: 10em
+
+.toggle
+    margin-left: -280px

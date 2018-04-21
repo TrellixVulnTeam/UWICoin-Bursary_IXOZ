@@ -1,0 +1,31 @@
+<form class="form" [formGroup]="accountForm" (ngSubmit)="submit()">
+    <h1 class="subheading">New Bursary Account</h1>
+    <div class="row">
+        <label for="fullName" class="form-label">Full name</label>
+        <input [(ngModel)]="fullName" formControlName="full_name" type="text" class="form-input" id="fullName"
+        [class.input-success]="accountForm.controls['full_name'].valid && accountForm.controls['full_name'].dirty"
+        [class.input-error]="!accountForm.controls['full_name'].valid && accountForm.controls['full_name'].dirty">
+    </div>
+    <div class="row">
+        <label for="inputEmail" class="form-label">Email</label>
+        <input [(ngModel)]="email" formControlName="email" type="email" class="form-input"
+        [class.input-success]="accountForm.controls['email'].valid && accountForm.controls['email'].dirty"
+        [class.input-error]="!accountForm.controls['email'].valid && accountForm.controls['email'].dirty">
+    </div>
+    <div class="row col-2">
+        <label for="inputRole" class="form-label">Role</label>
+        <select [(ngModel)]="role" formControlName="role" id="inputRole" class="form-input select"
+        [class.input-success]="accountForm.controls['role'].valid && accountForm.controls['role'].dirty"
+        [class.input-error]="!accountForm.controls['role'].valid && accountForm.controls['role'].dirty">
+            <ng-container *ngFor="let user_role of roles">
+                <option [value]="user_role.id">{{ user_role.name }}</option>
+            </ng-container>
+        </select>
+    </div>
+    <div class="row">
+        <input type="submit" class="form-button col-3" value="Save Account" [disabled]="!accountForm.valid" appDebounceClick [debounceTime]="500" (debounceClick)="submit()">
+    </div>
+    <div class="row error-message" *ngIf="response | async; let message">
+        {{ message }}
+    </div>
+</form>

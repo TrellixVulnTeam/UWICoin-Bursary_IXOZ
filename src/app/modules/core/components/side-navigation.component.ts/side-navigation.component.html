@@ -1,0 +1,22 @@
+<nav class="nav-container">
+    <ul class="main-list">
+        <ng-container *ngFor="let link of links">
+            <li class="nav-item" (click)="onSelect(link)" *ngIf="!link.authorization || link.authorization <= role">
+                <label [for]="link.id" class="nav-link" [class.active]="link === selectedLink" [routerLink]="[link.path]">
+                    <i class="icon fa" [ngClass]="link.icon"></i>
+                    <span class="menu-title">{{ link.name }}</span>
+                </label>
+                <input type="radio" name="link" [checked]="link == selectedLink" aria-hidden="true" [id]="link.id">
+                <ul class="secondary-list" *ngIf="link.children != null" [class.showLink]="isLinkVisible && link === selectedLink">
+                    <ng-container  *ngFor="let secondary_link of link.children">
+                        <li *ngIf="!secondary_link.authorization || secondary_link.authorization <= role">
+                            <a [routerLink]="[secondary_link.path]">
+                                <span class="menu-title">{{ secondary_link.name }}</span>
+                            </a>
+                        </li>
+                    </ng-container>
+                </ul>
+            </li>
+        </ng-container>
+    </ul>
+</nav>

@@ -1,0 +1,17 @@
+<nav class="main-nav">
+    <div class="left-panel panel">
+        <a class="side-nav-toggle" (click)="switchToggle()">
+            <i class="fa fa-bars" aria-hidden="true"></i>
+        </a>
+        <div class="nav-header" [routerLink]="['/bursary/dashboard']">
+            <img src="/assets/imgs/icon.png" alt="UWICoin Logo" class="logo">
+            <span class="logo-title">UWICoin Bursary</span>
+        </div>
+    </div>
+    <div class="right-panel panel">
+        <span class="nav-user" *ngIf="employeeName && employeeRole">{{ employeeName }} <strong>({{ employeeRole }})</strong></span>
+        <span class="nav-logout" (click)="logout()">
+            <a>Logout</a>
+        </span>
+    </div>
+</nav>

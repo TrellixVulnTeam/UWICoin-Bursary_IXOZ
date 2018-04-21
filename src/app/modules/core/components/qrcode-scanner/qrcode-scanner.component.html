@@ -1,0 +1,29 @@
+<div class="modal-container">
+    <div class="modal-content">
+        <div *ngIf="availableDevices" class="row">
+            <label for="video-input-select" class="form-label">Select your camera:</label>
+            <select id="video-input-select" class="form-input" (change)="onDeviceSelectChange($event.target.value)">
+                <option value="" [selected]="!selectedDevice">No Device</option>
+                <option *ngFor="let device of availableDevices" [value]="device.deviceId" [selected]="selectedDevice && device.deviceId === selectedDevice.deviceId">{{ device.label }}</option>
+            </select>
+        </div>
+
+        <div class="column">
+            <button (click)="scannerEnabled=!scannerEnabled" class="form-button">Toggle Scanner {{ scannerEnabled ? 'On': 'Off' }}</button>
+            <button class="form-button error" (click)="cancel()">Cancel</button>
+            <button class="form-button success" [disabled]="!response">Continue</button>
+        </div>
+
+        <div class="response" *ngIf="response; let res">
+            <span [style.success]="res.type === 'success'">{{ res.message }}</span>
+        </div>
+
+        <div [hidden]="!hasCameras" class="row">
+            <zxing-scanner #scanner [scannerEnabled]="scannerEnabled" [device]="selectedDevice" (camerasFound)="displayCameras($event)"
+                (scanSuccess)="handleQrCodeResult($event)" (scanError)="handleScanError($event)" [cssClass]="{customClass:true}"
+                cssClass="'scanner-video'">
+            </zxing-scanner>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,84 @@
+@import '~variables.sass'
+
+$highlight-color: complement($darker-primary)
+
+=highlight($width, $color)
+    content: ""
+    display: block
+    background-color: $color
+    width: $width
+    position: absolute
+    right: 0
+    top: 0
+    bottom: 0
+
+ul
+    padding: 0
+    margin: 0
+    border: 0
+li
+    list-style-type: none
+
+.link
+    display: block
+    padding: 1.2em
+    position: relative
+    color: $light
+    cursor: pointer
+    border-bottom: 1px solid
+
+a
+    text-decoration: none
+    @extend .link
+    border-bottom-color: darken($darker-primary, 10%)
+
+    &::after
+        +highlight(3px, lighten($highlight-color, 30%))
+
+.active
+    background: complement($darker-primary)
+
+    &::after
+        +highlight(8px, lighten($highlight-color, 30%))
+
+
+label
+    @extend .link
+    border-bottom-color: darken($darker-primary, 5%)
+
+    &::after
+        +highlight(8px, $primary)
+    
+.nav-container
+    display: block
+    font-size: 1em
+    background: $darker-primary
+    height: 100%
+
+.secondary-list
+    li
+        span
+            padding-left: 2.5em
+
+.main-list li:target secondary-list
+    max-height: 20em;
+
+.icon
+    width: 1em
+    padding: 0 0.8em 0 0.3em
+
+input[type="radio"]
+    display: none
+
+input[type="radio"] + .secondary-list
+    background: darken($darker-primary, 4%)
+    overflow: hidden
+    max-height: 0em
+    padding: 0
+    margin: 0
+    text-align: left
+    transition: all 0.3s ease-in
+
+input[type="radio"]:checked + .secondary-list
+    max-height: 20em
+

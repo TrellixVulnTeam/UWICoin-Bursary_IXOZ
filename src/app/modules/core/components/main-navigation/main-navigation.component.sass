@@ -1,0 +1,96 @@
+@import '~variables.sass'
+
+.logo
+    width: 50px
+    height: 50px
+    margin: 0 0.5em
+
+.side-nav-toggle
+    font-size: 1.5em
+    font-weight: 400
+    margin-right: 0.5em
+    pointer: cursor
+
+.main-nav
+    margin: 0
+    padding: 0.8em 1.5em
+    box-sizing: border-box
+    background-color: $darker-primary
+    color: $light
+    display: flex
+    flex-direction: row
+    justify-content: space-between
+    align-items: center
+    line-height: 1em
+    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.4)
+
+    .panel
+        display: flex
+        flex-direction: row
+
+    .left-panel
+        align-items: center
+
+        .nav-header
+            cursor: pointer
+            display: flex
+            flex-direction: row
+            align-items: center
+            line-height: 1.5em
+
+            .logo-title
+                font-family: 'Lato', sans-serif;
+                font-weight: 600
+                font-size: 1em
+
+    .right-panel
+        align-items: center
+
+        form
+            align-items: center
+            margin: 0 1em
+
+            input
+                padding-left: 40px
+                height: 40px
+                background: darken($primary, 15%)
+                outline: none
+                border: none
+                border-radius: 10px;
+                color: $light
+                font-size: 1.2em
+
+            label
+                font-size: 1.2em
+                margin-right: 10px
+        
+        .nav-user
+            padding: 0 2em
+            font-size: 0.9em
+
+        .nav-logout
+            display: inline-block
+            cursor: pointer
+            padding: 0 1.5em
+            font-weight: 600
+
+        .user
+            display: flex
+            flex-direction: column
+
+.search-container
+    position: relative
+
+.search-icon
+    position: absolute
+    left: 0
+    top: 0
+    z-index: 50
+    background: pink
+
+$breakpoint-tablet: 725px
+
+@media (max-width: $breakpoint-tablet)
+
+    .nav-user
+        display: none
