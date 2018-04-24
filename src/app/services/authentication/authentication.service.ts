@@ -31,6 +31,10 @@ export class AuthenticationService {
     return false;
   }
 
+  public getAuth() {
+    return this.afAuth.auth;
+  }
+
   public getAccount$(): Observable<IAccount> {
     return this.afAuth.authState.switchMap(user => {
       if (user) {
@@ -43,7 +47,7 @@ export class AuthenticationService {
   public getUser$(): Observable<IUser> {
     return this.afAuth.authState.switchMap(user => {
       if (user) {
-        return this.db.getObject(`${this.bursaryPath}/${user.uid}`);
+        return this.db.getObject(`${this.bursaryPath}/accounts/${user.uid}`);
       }
       return [];
     });
@@ -61,7 +65,7 @@ export class AuthenticationService {
   public async login(email: string, password: string) {
     return this.afAuth.auth.signInWithEmailAndPassword(email, password).then(user => {
       if (user) {
-        return this.db.getObject(`users/bursary/${user.uid}/role`).map(role => {
+        return this.db.getObject(`${this.bursaryPath}/accounts/${user.uid}/role`).map(role => {
           console.log(role);
           if (role && role >= Roles.busary_general && role <= Roles.busary_admin) {
             return true;
@@ -78,7 +82,7 @@ export class AuthenticationService {
 
   public async updateUserData(user: IUser): Promise<void> {
     if (user) {
-      return this.db.updateObject(`users/bursary/${user.uid}`, user);
+      return this.db.updateObject(`${this.bursaryPath}/accounts/${user.uid}`, user);
     }
   }
 
