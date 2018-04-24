@@ -11,43 +11,51 @@ import { Subscription } from 'rxjs/Subscription';
 import { fromEvent } from 'rxjs/observable/fromEvent';
 import * as RippleLib from 'ripple-lib';
 import 'rxjs/add/operator/take';
+import 'rxjs/add/observable/fromEvent';
+import { ILedger } from '../../models/ledger/ledger.models';
 
 @Injectable()
 export class RippleLibService {
 
   private api: any = new RippleLib.RippleAPI({ server: 'wss://s.altnet.rippletest.net:51233' });
-  private account: any;
-  private maxLedgerVersion: number;
-  private minLedgerVersion: number;
   private subscriptions: Subscription;
+  private currency = 'XRP';
 
   constructor(private afAuth: AngularFireAuth,
     private dbProvider: DatabaseService) {
 
     // Get the updated user state on changes
-    this.afAuth.authState.subscribe(user => {
+    this.subscriptions = this.afAuth.authState.subscribe(user => {
       if (user) {
-        this.fetchAddress(user.uid);
+        this.connect();
       } else {
         if (this.subscriptions) {
           this.subscriptions.unsubscribe();
         }
+        this.disconnect();
       }
-    });
-
-    // Get the updated ledger version on changes
-    fromEvent(this.api, 'ledger').subscribe((ledger: ILedgerVersion) => {
-      let min, max;
-      [min, max] = ledger.validatedLedgerVersions.split('-');
-      this.maxLedgerVersion = parseInt(max, 10);
-      this.minLedgerVersion = parseInt(min, 10);
     });
   }
 
+  public getLedger(): Observable<ILedger> {
+    return Observable.fromEvent(this.api, 'ledger').map((ledger: ILedgerVersion) => {
+      let min, max;
+      [min, max] = ledger.validatedLedgerVersions.split('-');
+      return {
+        baseFee: ledger.baseFeeXRP,
+        minLedgerVersion: parseInt(min, 10),
+        maxLedgerVersion: parseInt(max, 10)
+      };
+    });
+  }
+
+
   // Disconnects the application from the Ripple Server
-  public async connect(): Promise<any> {
+  public async connect(): Promise<void> {
     return this.api.connect().then(() => {
       console.log('Ripple connected');
+    }).catch(error => {
+      console.log('Error connecting to ripple');
     });
   }
 
@@ -57,53 +65,62 @@ export class RippleLibService {
     });
   }
 
-  // Fetches the user's address from the database
-  public fetchAddress(uid: string): void {
-    this.subscriptions = this.dbProvider.getObject(`users/bursary/account`).subscribe(addresses => {
-      if (addresses) {
-        this.account = addresses;
-      }
+  // Generates a unique address and secret for the user
+  public generateAddress(): IAccount {
+    return this.api.generateAddress();
+  }
+
+
+  // Returns the balance for a sngle currency
+  public async getBalance(address: string, currency?: string): Promise<IBalance> {
+    return this.connect().then(() => {
+      return this.getLedger().take(1).toPromise().then(result => {
+        const options = {
+          currency: this.currency,
+          ledgerVersion: result.maxLedgerVersion
+        };
+        return this.api.getBalances(address, options).then(balances => {
+          console.log(JSON.stringify(balances[0]));
+          return balances[0];
+        });
+      }).catch(error => {
+        console.log('Error getting ledger: ', error);
+      });
     });
   }
 
-  // Returns an object containing the user's address and secret
-  public getAccount(): IAccount {
-    return this.account;
-  }
-
-  // Returns the address of the user
-  public getAddress(): string {
-    return this.account.address;
-  }
-
-  // Returns the balance for a sngle currency
-  public async getBalance(currency?: string): Promise<IBalance> {
-
-    const options = {
-      currency: currency || 'XRP'
-    };
-    return this.api.getBalances(this.account.address, options).then(balances => balances[0]);
-  }
-
   // Returns the balances for each of the available currencies
-  public getBalances(): Promise<IBalance[]> {
-    return this.api.getBalances(this.account.address);
-  }
-
-  getCustomerBalance(customer_address: string, currency?: string): Promise<IBalance> {
-    const options = {
-      currency: currency || 'XRP'
-    };
-    return this.api.getBalances(this.account.address, options).then(balances => balances[0]);
+  public async getBalances(address: string): Promise<IBalance[]> {
+    return this.connect().then(() => {
+      return this.getLedger().take(1).toPromise().then(result => {
+        const options = {
+          ledgerVersion: result.maxLedgerVersion
+        };
+        return this.api.getBalances(address, options).then(balances => {
+          console.log(JSON.stringify(balances[0]));
+          return balances[0];
+        });
+      }).catch(error => {
+        console.log('Error getting ledger: ', error);
+      });
+    });
   }
 
   // Gets all the transactions for the user's account
-  public getTransactions(): Subscription {
-    const options = {
-      minLedgerVersion: this.minLedgerVersion,
-      maxLedgerVersion: this.maxLedgerVersion
-    };
-    return this.api.getTransactions(this.account.address, options);
+  public async getTransactions(address: string, limit?: number): Promise<ITransaction> {
+    return this.connect().then(() => {
+      return this.getLedger().take(1).toPromise().then(ledger => {
+        const options = {
+          minLedgerVersion: ledger.minLedgerVersion,
+          maxLedgerVersion: ledger.maxLedgerVersion,
+          limit: limit != null ? limit : undefined
+        };
+        return this.api.getTransactions(address, options);
+      }).catch(error => {
+        console.log('Error getting ledger: ', error);
+      });
+    });
+
   }
 
   // Returns whether or not the ripple api is connected to the server
@@ -112,21 +129,23 @@ export class RippleLibService {
   }
 
 
-  public async preparePayment(payment: IPayment, address: string): Promise<any> {
-    const instructions = {
-      maxLedgerVersionOffset: 5
-    };
-    return this.api.preparePayment(address, payment, instructions).then(prepared => {
-      console.log('Payment transaction prepared');
-      return prepared;
+  public async preparePayment(account: IAccount, vendorAddress: string, payment: IPayment): Promise<any> {
+    return this.connect().then(() => {
+
+      const instructions = {
+        maxLedgerVersionOffset: 5
+      };
+
+      return this.api.preparePayment(account.address, payment, instructions).then(prepared => {
+        console.log('Payment transaction prepared');
+        const { signedTransaction } = this.api.sign(prepared.txJSON, account.secret);
+        console.log('Payment transaction signed');
+        return this.api.submit(signedTransaction).then(message => {
+          console.log(JSON.stringify(message));
+          return message;
+        });
+      });
     });
-  }
-
-
-  public async signAndSubmitPayment(prepared: any) {
-    const { signedTransaction } = await this.api.sign(prepared.txJSON, this.account.secret);
-    console.log('Payment transaction signed');
-    return this.api.submit(signedTransaction);
   }
 
 }
