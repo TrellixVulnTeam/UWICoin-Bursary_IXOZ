@@ -12,20 +12,27 @@ import { Subject } from 'rxjs/Subject';
 export class MessagingService {
 
     messaging = firebase.messaging();
-    private messageSource = new Subject();
-    currentMessage = this.messageSource.asObservable();
+    currentMessage = new BehaviorSubject(null);
 
-    constructor(private db: DatabaseService,
+    constructor(private db: AngularFireDatabase,
         private auth: AuthenticationService) {
 
     }
 
+    updateToken(token) {
+        this.auth.getAuthState().take(1).subscribe(user => {
+            if (!user) { return; }
+
+            const data = { [user.uid]: token };
+            this.db.object('fcmTokens/').update(data);
+        });
+    }
+
     getPermission() {
-        this.messaging.requestPermission()
-            .then(() => {
-                console.log('Notification permission granted.');
-                return this.messaging.getToken();
-            })
+        this.messaging.requestPermission().then(() => {
+            console.log('Notification permission granted.');
+            return this.messaging.getToken();
+        })
             .then(token => {
                 console.log(token);
                 this.updateToken(token);
@@ -35,31 +42,11 @@ export class MessagingService {
             });
     }
 
-    updateToken(token) {
-        this.auth.getAccount$().subscribe(account => {
-            if (account) {
-                this.db.setObject(`fcmTokens/`, { [account.address]: token });
-            }
-        }, error => {
-            console.log('Error updating messaging token: ', error);
-        });
-    }
-
-    monitorRefresh() {
-        this.messaging.onTokenRefresh(() => {
-            this.messaging.getToken()
-                .then(refreshedToken => {
-                    console.log('Token refreshed.');
-                    this.updateToken(refreshedToken);
-                })
-                .catch(err => console.log(err, 'Unable to retrieve new token'));
-        });
-    }
-
-    receiveMessages() {
-        this.messaging.onMessage(payload => {
+    receiveMessage() {
+        this.messaging.onMessage((payload) => {
             console.log('Message received. ', payload);
-            this.messageSource.next(payload);
+            this.currentMessage.next(payload);
         });
+
     }
 }
