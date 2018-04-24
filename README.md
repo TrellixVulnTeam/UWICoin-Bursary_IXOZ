@@ -13,6 +13,15 @@ The goal of this project is to create a form of cryptocurrency(UWICoin), based o
 
 The <a href="https://github.com/UWICoin/UWICoin-Bursary">UWICoin bursary application</a>, created using Angular 5, will be used by all bursary staff to add vendor accounts, manage and add bursary general and admin accounts and to accept debit and credit transactions from students or staff.
 
+An important desing decision was that only administrators can create accounts for other employees to use.
+Therefore, this application does not have a signup page. The following credentials can be used to test the
+system. Note that this is a prototype of what is expected of the final product. *Therefore the credentials may
+not work in a final product.*
+
+*email*: 'uwicoin.manager.01@hotmail.com'
+*password*: 'password1'
+
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.6.8.
 
 ### Prerequisites
