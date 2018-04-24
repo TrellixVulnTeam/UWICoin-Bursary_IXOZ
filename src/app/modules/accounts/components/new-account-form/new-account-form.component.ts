@@ -8,9 +8,11 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Roles } from './../../../../models/roles/roles.models';
 import { Component } from '@angular/core';
 import { AuthenticationService } from '../../../../services/authentication/authentication.service';
+import { ToastrService } from 'ngx-toastr';
 import { Subscription } from 'rxjs/Subscription';
 import * as firebase from 'firebase';
 import { Subject } from 'rxjs/Subject';
+import 'rxjs/add/operator/first';
 
 @Component({
     selector: 'app-new-account-form',
@@ -31,24 +33,17 @@ export class NewAccountFormComponent {
     createdUser: Observable<IUser>;
     loading = false;
     userSub: Subscription;
-    response = new BehaviorSubject<string>(null);
 
     constructor(private formBuilder: FormBuilder,
         private db: AngularFireDatabase,
         private dbService: DatabaseService,
-        private auth: AuthenticationService) {
+        private auth: AuthenticationService,
+        private toastr: ToastrService) {
         this.accountForm = this.formBuilder.group({
             'full_name': [null, Validators.compose([Validators.required])],
             'email': [null, Validators.compose([Validators.required, Validators.email])],
             'role': [null, Validators.compose([Validators.required])]
         });
-
-        this.fullName = 'Darion Hernandez';
-        this.email = 'darionhernandez868@gmail.com';
-        this.role = 4;
-    }
-
-    showError(error: string) {
 
     }
 
@@ -66,22 +61,31 @@ export class NewAccountFormComponent {
                 uid: uid
             };
             // tslint:disable-next-line:max-line-length
-            const subscription = this.db.list('users/bursary', ref => ref.orderByChild('email').equalTo(this.email)).valueChanges().switchMap(result => {
-                console.log(result.length);
+            const subscription = this.db.list('users/bursary/accounts', ref => ref.orderByChild('email').equalTo(this.email)).valueChanges().take(1).switchMap(result => {
+
                 if (result.length <= 0) {
-                    this.dbService.setObject(`users/bursary/${uid}`, user).catch(error => {
+                    this.dbService.setObject(`users/bursary/accounts/${uid}`, user).then(() => {
+                        this.showSuccessToast('User created successfully');
+                    }).catch(error => {
                         console.log('Error updating user: ', JSON.stringify(error));
-                        this.response.next('Error updating user data');
+                        this.showErrorToast('Error updating user data');
                     });
                 } else {
                     console.log('User already exists');
-                    this.response.next('User already exists');
+                    this.showErrorToast('User already exits');
                 }
                 return [];
-            }).take(1).subscribe(result => {
-                console.log(result);
-            });
-            setTimeout(() => subscription.unsubscribe(), 5000);
+            }).subscribe(result => result);
         }
+    }
+
+    showErrorToast(message: string, title?: string) {
+        this.toastr.error(message, title);
+        this.accountForm.reset();
+    }
+
+    showSuccessToast(message: string, title?: string) {
+        this.toastr.success(message, title);
+        this.accountForm.reset();
     }
 }
