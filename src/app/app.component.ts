@@ -10,6 +10,7 @@ import { DatabaseService } from './services/database/database.services';
 import { IVendor } from './models/vendor/vendor.models';
 import { IUser } from './models/user/user.models';
 import { Subscription } from 'rxjs/Subscription';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
 
@@ -21,21 +22,22 @@ export class AppComponent implements OnDestroy, OnInit {
 
 	messaging = firebase.messaging();
 	messageSource = new Subject();
-	currentMessage = this.messageSource.asObservable();
+	currentMessage;
 
 	vendorSubscription: Subscription;
 	bursarySubscription: Subscription;
 
 	// tslint:disable-next-line:max-line-length
-	constructor(public auth: AuthenticationService, public ripple: RippleLibService, public db: DatabaseService, private afDb: AngularFireDatabase, public msg: MessagingService) {
-		this.msg.getPermission();
-		this.msg.monitorRefresh();
-		this.msg.receiveMessages();
+	constructor(public auth: AuthenticationService, public ripple: RippleLibService, public db: DatabaseService, private afDb: AngularFireDatabase, public msg: MessagingService, private toastr: ToastrService) {
 	}
 
 	ngOnInit() {
 		this.listToCreateVendorAccounts();
 		this.listToCreateBursaryAccounts();
+
+		this.msg.getPermission();
+		this.msg.receiveMessage();
+		this.receiveMessage();
 	}
 
 	ngOnDestroy() {
@@ -47,6 +49,20 @@ export class AppComponent implements OnDestroy, OnInit {
 		}
 	}
 
+	receiveMessage() {
+		this.messaging.onMessage((result: any) => {
+			const data = result.data;
+			const notification = result.notification;
+
+			if (notification.title === 'Transaction accepted') {
+				this.showSuccessToast(data.message);
+			} else if (notification.title === 'Transaction canceled') {
+				this.showErrorToast(data.message);
+			}
+		});
+
+	}
+
 	listToCreateVendorAccounts() {
 		// tslint:disable-next-line:max-line-length
 		this.vendorSubscription = this.afDb.list('users/vendors/', ref => ref.orderByChild('created').equalTo(true)).valueChanges().subscribe((accounts: IUser[]) => {
@@ -54,10 +70,12 @@ export class AppComponent implements OnDestroy, OnInit {
 				if (account.account_setup === false) {
 					this.auth.sendPasswordResetEmail(account.email).then(() => {
 						console.log('Password reset email sent: ', account.email);
+						this.showSuccessToast(`Password reset email sent to ${account.email}`);
 						this.db.updateObject(`users/vendors/${account.uid}`, { account_setup: true })
 							.catch(error => console.log('Error updating account setup'));
 					}).catch(error => {
 						console.log('Error sending password reset email: ', error);
+						this.showErrorToast(`Error sending email to ${account.email}`);
 					});
 				}
 			});
@@ -66,19 +84,29 @@ export class AppComponent implements OnDestroy, OnInit {
 
 	listToCreateBursaryAccounts() {
 		// tslint:disable-next-line:max-line-length
-		this.bursarySubscription = this.afDb.list('users/bursary/', ref => ref.orderByChild('created').equalTo(true)).valueChanges().subscribe((accounts: IUser[]) => {
+		this.bursarySubscription = this.afDb.list('users/bursary/accounts/', ref => ref.orderByChild('created').equalTo(true)).valueChanges().subscribe((accounts: IUser[]) => {
 			accounts.map((account: IUser) => {
 				if (account.account_setup === false) {
 					this.auth.sendPasswordResetEmail(account.email).then(() => {
 						console.log('Password reset email sent: ', account.email);
-						this.db.updateObject(`users/bursary/${account.uid}`, { account_setup: true })
+						this.showSuccessToast(`Password reset email sent to ${account.email}`);
+						this.db.updateObject(`users/bursary/accounts/${account.uid}`, { account_setup: true })
 							.catch(error => console.log('Error updating account setup'));
 					}).catch(error => {
 						console.log('Error sending password reset email: ', error);
+						this.showErrorToast(`Error sending email to ${account.email}`);
 					});
 				}
 			});
 		});
+	}
+
+	showErrorToast(message: string, title?: string) {
+		this.toastr.error(message, title);
+	}
+
+	showSuccessToast(message: string, title?: string) {
+		this.toastr.success(message, title);
 	}
 
 }
