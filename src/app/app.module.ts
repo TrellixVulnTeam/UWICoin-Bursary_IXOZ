@@ -19,9 +19,12 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { AccountsTableComponent } from './components/accounts-table/accounts-table.components';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 // tslint:disable-next-line:max-line-length
 import { MatSortModule, MatDialogModule, MatButtonModule, MatInputModule, MatSelectModule, MatFormFieldModule, MatCheckboxModule } from '@angular/material';
-
+import { ToastrModule } from 'ngx-toastr';
+import { AuthGuard } from './services/auth-guard/auth-guard';
+import { RoleGuard } from './services/role-guard/role-guard';
 @NgModule({
   declarations: [
     AppComponent,
@@ -36,6 +39,8 @@ import { MatSortModule, MatDialogModule, MatButtonModule, MatInputModule, MatSel
     AngularFireStorageModule,
     CommonModule,
     CoreModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot(),
     FormsModule,
     MatButtonModule,
     MatInputModule,
@@ -47,6 +52,7 @@ import { MatSortModule, MatDialogModule, MatButtonModule, MatInputModule, MatSel
     MatButtonModule,
     MatCheckboxModule,
     MatFormFieldModule,
+    MatSnackBarModule,
     BrowserAnimationsModule,
     ReactiveFormsModule
   ],
@@ -55,6 +61,8 @@ import { MatSortModule, MatDialogModule, MatButtonModule, MatInputModule, MatSel
     DatabaseService,
     MessagingService,
     RippleLibService,
+    AuthGuard,
+    RoleGuard
   ],
   bootstrap: [AppComponent]
 })
