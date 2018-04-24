@@ -3,19 +3,19 @@
     <legend>General Information</legend>
     <fieldset>
         <div class="row">
-            <label for="name" class="form-label">Vendor's Name</label>
+            <label for="name" class="form-label required">Vendor's Name</label>
             <input type="text" class="form-input" id="name" [(ngModel)]="name" formControlName="vendorName"
             [class.input-success]="vendorForm.controls['vendorName'].valid && vendorForm.controls['vendorName'].dirty"
             [class.input-error]="!vendorForm.controls['vendorName'].valid && vendorForm.controls['vendorName'].dirty">
         </div>
         <div class="row">
-            <label for="description" class="form-label">Vendor Description</label>
+            <label for="description" class="form-label required">Vendor Description</label>
             <input type="text" class="form-input" id="description" [(ngModel)]="description" formControlName="vendorDescription"
             [class.input-success]="vendorForm.controls['vendorDescription'].valid && vendorForm.controls['vendorDescription'].dirty"
             [class.input-error]="!vendorForm.controls['vendorDescription'].valid && vendorForm.controls['vendorDescription'].dirty">
         </div>
         <div class="row">
-            <label for="type" class="form-label">Vendor Type</label>
+            <label for="type" class="form-label required">Vendor Type</label>
             <select class="form-input select" id="type" [(ngModel)]="type" formControlName="vendorType"
             [class.input-success]="vendorForm.controls['vendorType'].valid && vendorForm.controls['vendorType'].dirty"
             [class.input-error]="!vendorForm.controls['vendorType'].valid && vendorForm.controls['vendorType'].dirty">
@@ -38,20 +38,18 @@
     <fieldset>
         <div class="column">
             <div class="row col-2">
-                <label for="inputAddress" class="form-label">Address Line 1</label>
-                <input type="text" class="form-input" id="inputAddress" [(ngModel)]="addressLine1" formControlName="addressLine1"
-                [class.input-success]="vendorForm.controls['addressLine1'].valid && vendorForm.controls['addressLine1'].dirty"
-            [class.input-error]="!vendorForm.controls['addressLine1'].valid && vendorForm.controls['addressLine1'].dirty">
+                <label for="inputAddress" class="form-label required">Address Line 1</label>
+                <input type="text" class="form-input" id="inputAddress" [(ngModel)]="addressLine1" formControlName="addressLine"
+                [class.input-success]="vendorForm.controls['addressLine'].valid && vendorForm.controls['addressLine'].dirty"
+                [class.input-error]="!vendorForm.controls['addressLine'].valid && vendorForm.controls['addressLine'].dirty">
             </div>
             <div class="row col-2">
                 <label for="inputAddress2" class="form-label">Address Line 2</label>
-                <input type="text" class="form-input" id="inputAddress2" [(ngModel)]="addressLine2" formControlName="addressLine2"
-                [class.input-success]="vendorForm.controls['addressLine2'].valid && vendorForm.controls['addressLine2'].dirty"
-            [class.input-error]="!vendorForm.controls['addressLine2'].valid && vendorForm.controls['addressLine2'].dirty">
+                <input type="text" class="form-input" id="inputAddress2" [(ngModel)]="addressLine2">
             </div>
         </div>
         <div class="row col-2">
-            <label for="inputCity" class="form-label">City</label>
+            <label for="inputCity" class="form-label required">City</label>
             <input type="text" class="form-input" id="inputCity" [(ngModel)]="city" formControlName="city"
             [class.input-success]="vendorForm.controls['city'].valid && vendorForm.controls['city'].dirty"
             [class.input-error]="!vendorForm.controls['city'].valid && vendorForm.controls['city'].dirty">
@@ -60,13 +58,13 @@
     <legend>Contact</legend>
     <fieldset>
         <div class="row">
-            <label for="inputEmail" class="form-label">Administrator Email</label>
+            <label for="inputEmail" class="form-label required">Administrator Email</label>
             <input type="email" class="form-input" id="inputEmail" [(ngModel)]="adminEmail" formControlName="adminEmail"
             [class.input-success]="vendorForm.controls['adminEmail'].valid && vendorForm.controls['adminEmail'].dirty"
             [class.input-error]="!vendorForm.controls['adminEmail'].valid && vendorForm.controls['adminEmail'].dirty">
         </div>
         <div class="row">
-            <label for="inputAdminName" class="form-label">Administrator Name</label>
+            <label for="inputAdminName" class="form-label required">Administrator Name</label>
             <input type="test" class="form-input" id="inputAdminName" [(ngModel)]="adminName" formControlName="adminName"
             [class.input-success]="vendorForm.controls['adminName'].valid && vendorForm.controls['adminName'].dirty"
             [class.input-error]="!vendorForm.controls['adminName'].valid && vendorForm.controls['adminName'].dirty">
@@ -74,16 +72,14 @@
         <div class="column">
             <div class="row col-2">
                 <div class="row">
-                    <label for="inputTel1" class="form-label">Telephone 1</label>
+                    <label for="inputTel1" class="form-label required">Telephone 1</label>
                     <input type="tel" class="form-input" id="inputTel1" [(ngModel)]="telephone1" formControlName="telephone1"
                     [class.input-success]="vendorForm.controls['telephone1'].valid && vendorForm.controls['telephone1'].dirty"
                     [class.input-error]="!vendorForm.controls['telephone1'].valid && vendorForm.controls['telephone1'].dirty">
                 </div>
                 <div class="row">
                     <label for="inputTel2" class="form-label">Telephone 2</label>
-                    <input type="tel" class="form-input" id="inputTel2" [(ngModel)]="telephone2" formControlName="telephone2"
-                    [class.input-success]="vendorForm.controls['telephone2'].valid && vendorForm.controls['telephone2'].dirty"
-                    [class.input-error]="!vendorForm.controls['telephone2'].valid && vendorForm.controls['telephone2'].dirty">
+                    <input type="tel" class="form-input" id="inputTel2" [(ngModel)]="telephone2">
                 </div>
             </div>
         </div>
@@ -92,21 +88,15 @@
     <fieldset>
         <div class="row">
             <label for="inputFacebook" class="form-label">Facebook Link</label>
-            <input type="url" class="form-input" id="inputFacebook" [(ngModel)]="facebookLink" formControlName="facebookLink"
-            [class.input-success]="vendorForm.controls['facebookLink'].valid && vendorForm.controls['facebookLink'].dirty"
-            [class.input-error]="!vendorForm.controls['facebookLink'].valid && vendorForm.controls['facebookLink'].dirty">
+            <input type="url" class="form-input" id="inputFacebook" [(ngModel)]="facebookLink">
         </div>
         <div class="row">
             <label for="inputTwitter" class="form-label">Twitter Link</label>
-            <input type="url" class="form-input" id="inputTwitter" [(ngModel)]="twitterLink" formControlName="twitterLink"
-            [class.input-success]="vendorForm.controls['twitterLink'].valid && vendorForm.controls['twitterLink'].dirty"
-            [class.input-error]="!vendorForm.controls['twitterLink'].valid && vendorForm.controls['twitterLink'].dirty">
+            <input type="url" class="form-input" id="inputTwitter" [(ngModel)]="twitterLink">
         </div>
         <div class="row">
             <label for="inputInstagram" class="form-label">Instagram Link</label>
-            <input type="url" class="form-input" id="inputInstagram" [(ngModel)]="instagramLink" formControlName="instagramLink"
-            [class.input-success]="vendorForm.controls['instagramLink'].valid && vendorForm.controls['instagramLink'].dirty"
-            [class.input-error]="!vendorForm.controls['instagramLink'].valid && vendorForm.controls['instagramLink'].dirty">
+            <input type="url" class="form-input" id="inputInstagram" [(ngModel)]="instagramLink">
         </div>
     </fieldset>
     <div class="row">
