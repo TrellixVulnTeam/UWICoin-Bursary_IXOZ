@@ -14,12 +14,12 @@ export class SideNavigationComponent {
     isLinkVisible = false;
     selectedLink: ILink;
     links: ILink[] = [
-        {
-            name: 'Dashboard',
-            path: '/bursary/dashboard',
-            icon: 'fa-tachometer',
-            id: 'dashboard-link'
-        },
+        // {
+        //     name: 'Dashboard',
+        //     path: '/bursary/dashboard',
+        //     icon: 'fa-tachometer',
+        //     id: 'dashboard-link'
+        // },
         {
             authorization: Roles.busary_admin,
             name: 'Accounts',
@@ -31,10 +31,10 @@ export class SideNavigationComponent {
                     name: 'New Bursary Account',
                     path: '/bursary/accounts/page/new-account',
                 },
-                {
-                    name: 'Manage Accounts',
-                    path: '/bursary/accounts/page/manage-accounts',
-                }
+                // {
+                //     name: 'Manage Accounts',
+                //     path: '/bursary/accounts/page/manage-accounts',
+                // }
             ]
         },
         {
@@ -47,10 +47,10 @@ export class SideNavigationComponent {
                     name: 'New Vendor',
                     path: '/bursary/vendors/page/new-vendor'
                 },
-                {
-                    name: 'Manage Vendors',
-                    path: '/bursary/vendors/page/manage-vendors'
-                }
+                // {
+                //     name: 'Manage Vendors',
+                //     path: '/bursary/vendors/page/manage-vendors'
+                // }
             ]
         },
         {
@@ -63,18 +63,18 @@ export class SideNavigationComponent {
                     name: 'New Transaction',
                     path: '/bursary/transactions/page/new-transaction'
                 },
-                {
-                    name: 'Manage Transactions',
-                    path: '/bursary/transactions/page/manage-transactions'
-                }
+                // {
+                //     name: 'Manage Transactions',
+                //     path: '/bursary/transactions/page/manage-transactions'
+                // }
             ]
         },
-        {
-            name: 'Settings',
-            path: '/bursary/settings',
-            icon: 'fa-cog',
-            id: 'settings-link'
-        }
+        // {
+        //     name: 'Settings',
+        //     path: '/bursary/settings',
+        //     icon: 'fa-cog',
+        //     id: 'settings-link'
+        // }
     ];
 
     constructor(private router: Router) {
