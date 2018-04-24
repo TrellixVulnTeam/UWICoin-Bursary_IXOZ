@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { AccountsHomePageComponent } from './pages/home/accounts.home.page';
 import { NewAccountPageComponent } from './pages/new-account/new-account.page';
+import { RoleGuard } from '../../services/role-guard/role-guard';
 
 const routes: Routes = [
   {
@@ -11,7 +12,8 @@ const routes: Routes = [
     children: [
       {
         path: 'new-account',
-        component: NewAccountPageComponent
+        component: NewAccountPageComponent,
+        canActivate: [RoleGuard]
       },
       {
         path: 'manage-accounts',
