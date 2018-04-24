@@ -1,1 +1,13 @@
 @import '~variables.sass'
+
+=transaction-message
+    padding: 0.8em
+    font-size: 0.8em
+
+.transaction-error
+    color: $error
+    +transaction-message()
+
+.transaction-success
+    color: $success
+    +transaction-message()

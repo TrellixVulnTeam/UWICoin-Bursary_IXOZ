@@ -1,8 +1,13 @@
+import { AngularFireDatabase } from 'angularfire2/database';
+import { Subscription } from 'rxjs/Subscription';
+import { Observable } from 'rxjs/Observable';
 import { Component } from '@angular/core';
 import { RippleLibService } from '../../../../services/rippled-lib/ripple-lib';
 import { DatabaseService } from '../../../../services/database/database.services';
 import { AuthenticationService } from '../../../../services/authentication/authentication.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { IBalance } from '../../../../models/balance/balance.models';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
     selector: 'app-transaction-form',
@@ -21,12 +26,17 @@ export class TransactionFormComponent {
     qrCodeResultMessage;
     payment: 'Debit' | 'Credit' = null;
     transactionForm: FormGroup;
+    enoughBalance = false;
+    subscriptions: Subscription;
 
     constructor(private ripple: RippleLibService,
-        private db: DatabaseService,
-        private formBuilder: FormBuilder) {
+        private dbService: DatabaseService,
+        private db: AngularFireDatabase,
+        private auth: AuthenticationService,
+        private formBuilder: FormBuilder,
+        private toastr: ToastrService) {
 
-        db.getObject('users/bursary/account').subscribe(account => {
+        this.subscriptions = dbService.getObject('users/bursary/account').subscribe(account => {
             if (account) {
                 this.address = account.address;
                 this.secret = account.secret;
@@ -42,104 +52,92 @@ export class TransactionFormComponent {
 
     }
     enterDebitTransaction() {
-        const options = {
-            source: {
-                address: this.destination,
-                maxAmount: {
-                    value: this.amount.toString(),
-                    currency: 'XRP'
-                }
-            },
-            destination: {
-                address: this.address,
-                amount: {
-                    value: this.amount.toString(),
-                    currency: 'XRP'
-                }
-            }
-        };
-        this.ripple.preparePayment(options, this.destination).then(prepared => {
-            let result = prepared.txJSON.replace('\\', '');
-            result = JSON.parse(result);
-            const transaction = {
-                paymentType: 'Debit',
-                time: new Date(),
-                description: this.description,
-                amount: result.Amount,
-                source: result.Account,
-                destination: result.Destination,
-                fee: result.Fee,
-                prepared: prepared,
-                status: 'pending'
-            };
-            this.db.setObject(`transactions/debit/${this.destination}`, transaction).then(() => {
-                console.log('Debit transaction sent');
-                this.db.getObject(`transactions/debit/${result.destination}`).subscribe(transaction_result => {
-                    if (transaction_result && transaction_result.status === 'success') {
-                        console.log('Success');
-                        this.transactionForm.reset();
+        this.auth.getAccount$().take(1).subscribe(account => {
+            const key = this.dbService.getPushKey();
+            const options = {
+                source: {
+                    address: this.destination,
+                    maxAmount: {
+                        value: this.amount.toString(),
+                        currency: 'XRP'
                     }
-                });
+                },
+                destination: {
+                    address: account.address,
+                    amount: {
+                        value: this.amount.toString(),
+                        currency: 'XRP'
+                    }
+                },
+                status: 'pending',
+                description: this.description,
+                uid: this.auth.getAuth().currentUser.uid,
+                key: key
+            };
+            this.dbService.setObject(`transactions/debit/${key}/`, options).then(() => {
+                this.showSuccessToast('The transaction was sent successfully');
+                this.transactionForm.reset();
             }).catch(error => {
-                console.error(error);
-                this.transactionForm.controls['destination'].reset();
+                this.showErrorToast('The transaction was failed to send');
+                this.transactionForm.reset();
             });
-        }).catch(error => {
-            console.log(error);
-            this.transactionForm.controls['destination'].reset();
+
         });
+
     }
 
     enterCreditTransaction() {
-        const options = {
-            source: {
-                address: this.address,
-                maxAmount: {
-                    value: this.amount.toString(),
-                    currency: 'XRP'
+        this.auth.getAccount$().take(1).subscribe(account => {
+            const options = {
+                source: {
+                    address: account.address,
+                    maxAmount: {
+                        value: this.amount.toString(),
+                        currency: 'XRP'
+                    }
+                },
+                destination: {
+                    address: this.destination,
+                    amount: {
+                        value: this.amount.toString(),
+                        currency: 'XRP'
+                    }
                 }
-            },
-            destination: {
-                address: this.destination,
-                amount: {
-                    value: this.amount.toString(),
-                    currency: 'XRP'
-                }
-            }
-        };
-        console.log(options);
-        this.ripple.preparePayment(options, this.address).then(prepared => {
-            console.log(prepared);
-            this.ripple.signAndSubmitPayment(prepared).then(message => {
-                let result = prepared.txJSON.replace('\\', '');
-                result = JSON.parse(result);
+            };
+            this.ripple.preparePayment(account, this.address, options).then(prepared => {
+                const key = this.dbService.getPushKey();
                 const transaction = {
-                    paymentType: 'Debit',
+                    paymentType: 'Credit',
                     time: new Date(),
                     description: this.description,
-                    amount: result.Amount,
-                    source: result.Account,
-                    destination: result.Destination,
-                    status: message.resultCode === 'tesSUCCESS' ? 'success' : message.resultCode
+                    amount: {
+                        value: options.destination.amount.value,
+                        currency: 'XRP',
+                    },
+                    source: options.source.address,
+                    destination: options.destination.address,
+                    status: prepared.resultCode === 'tesSUCCESS' ? 'success' : 'failed',
+                    uid: this.auth.getAuth().currentUser.uid,
+                    key: key
                 };
-                this.db.setObject(`transactions/credit/${this.destination}`, transaction).then(() => {
-                    // Send a notification that the transaction was successfull
-                    console.log('Success');
+                this.dbService.setObject(`transactions/credit/${key}`, transaction).then(() => {
+                    this.showSuccessToast('The transaction was successful');
                     this.transactionForm.reset();
                 });
             }).catch(error => {
                 console.error(error);
-                this.transactionForm.controls['destination'].reset();
+                this.showErrorToast('The transaction failed');
+                this.transactionForm.reset();
             });
-        }).catch(error => {
-            console.error(error);
-            this.transactionForm.controls['destination'].reset();
         });
     }
 
     getQRCodeResult(result: any) {
         if (result.status === 'Scan successful') {
             this.destination = result.account;
+        }
+        if (this.payment && this.payment === 'Debit') {
+            this.checkBalance();
         }
         this.qrCodeResultMessage = result.status;
         this.showQRCodeScanner = false;
@@ -154,10 +152,46 @@ export class TransactionFormComponent {
                 console.log('Credit payment made');
                 this.enterCreditTransaction();
             }
+            this.qrCodeResultMessage = null;
         }
     }
 
     toggleShowQRCode() {
         this.showQRCodeScanner = this.showQRCodeScanner === true ? false : true;
+    }
+
+    checkBalance() {
+        if (this.destination != null && this.amount != null && this.payment === 'Debit') {
+            console.log(this.destination);
+            this.ripple.getBalance(this.destination).then((balance: IBalance) => {
+                if (balance) {
+                    const currentBalance = parseInt(balance.value, 10);
+                    const amount = parseInt(this.amount, 10);
+
+                    if (currentBalance < amount) {
+                        this.transactionForm.controls['destination'].setErrors({ 'notenough': true });
+                        this.showErrorToast('The user does not have enough money to complete the transaction.');
+                    } else {
+                        this.transactionForm.controls['destination'].setErrors(null);
+                        this.showSuccessToast('The user has enough money.');
+                    }
+                    return;
+                }
+                this.transactionForm.controls['destination'].setErrors({ 'notenough': true });
+                this.showErrorToast('The user does not have enough money to complete the transaction.');
+            }).catch(error => {
+                console.log(error);
+                this.transactionForm.controls['destination'].setErrors({ 'notenough': true });
+                this.showErrorToast('The user does not have enough money to complete the transaction.');
+            });
+        }
+    }
+
+    showErrorToast(message: string, title?: string) {
+        this.toastr.error(message, title);
+    }
+
+    showSuccessToast(message: string, title?: string) {
+        this.toastr.success(message, title);
     }
 }
