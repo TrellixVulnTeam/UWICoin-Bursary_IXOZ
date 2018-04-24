@@ -1,3 +1,4 @@
+import { AuthGuard } from './services/auth-guard/auth-guard';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule, CanActivate } from '@angular/router';
 import { MainComponent } from './components/main.component';
@@ -18,31 +19,31 @@ const routes: Routes = [
       {
         path: 'dashboard',
         loadChildren: 'app/modules/dashboard/dashboard.module#DashboardModule',
-        canActivate: []
+        canActivate: [AuthGuard]
       },
       {
         path: 'accounts',
         loadChildren: 'app/modules/accounts/accounts.module#AccountsModule',
-        canActivate: []
+        canActivate: [AuthGuard]
       },
       {
         path: 'vendors',
         loadChildren: 'app/modules/vendors/vendors.module#VendorsModule',
-        canActivate: []
+        canActivate: [AuthGuard]
       },
       {
         path: 'transactions',
         loadChildren: 'app/modules/transactions/transactions.module#TransactionsModule',
-        canActivate: []
+        canActivate: [AuthGuard]
       },
       {
         path: 'settings',
         loadChildren: 'app/modules/settings/settings.module#SettingsModule',
-        canActivate: []
+        canActivate: [AuthGuard]
       },
       {
         path: '',
-        redirectTo: 'dashboard',
+        redirectTo: 'accounts',
         pathMatch: 'full'
       },
       {
