@@ -68,7 +68,7 @@ q
     border-color: $outline
     height: 45px
     border-radius: 3px
-    border-width: 0.5px
+    border-width: 1px
     +form-margin()
 
 input[type="submit"]:disabled    
@@ -159,3 +159,16 @@ table
 
         th
             color: $primary
+
+.required
+    position: relative
+    display: inline-block
+
+    &::after
+        position: relative
+        display: inline-block
+        content: '*required'
+        padding-left: 1em
+        color: $error
+        font-weight: 500
+        font-style: italic
